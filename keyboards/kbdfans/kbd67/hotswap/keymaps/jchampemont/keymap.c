@@ -4,8 +4,11 @@
 #define KC_EURO LSFT(LALT(KC_2))
 
 enum keycodes {
-  GOOGURL = SAFE_RANGE
+  GOOGURL = SAFE_RANGE,
+  DYNAMIC_MACRO_RANGE
 };
+
+#include "dynamic_macro.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] = LAYOUT(
@@ -19,11 +22,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_GRV , KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_F5  , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 , _______,  KC_DEL,  _______  , \
   _______, _______, _______, KC_EURO, RESET,   _______, _______, _______, _______, _______, _______, _______, _______, _______,           _______, \
   _______, KC_VOLU, KC_VOLD, KC_MUTE, _______, GOOGURL, _______, _______, _______, _______, _______, _______,          _______,           _______, \
-  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_BTN1,                    KC_MS_U, KC_BTN2, \
+  _______, DYN_REC_START1, DYN_REC_STOP, DYN_MACRO_PLAY1, _______, _______, _______, _______, _______, _______, _______, KC_BTN1,                    KC_MS_U, KC_BTN2, \
   _______, _______, _______,                   _______,                            _______, _______,                    KC_MS_L, KC_MS_D, KC_MS_R),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (!process_record_dynamic_macro(keycode, record)) {
+    return false;
+  }
   switch (keycode) {
     case GOOGURL:
       if (record->event.pressed) {
